@@ -1,21 +1,24 @@
 <template>
   <ul class="players-list">
-    <li v-for="player in players" :key="player.id">
-      <Player v-bind:player="player" />
+    <li v-for="player in stats" :key="player.player.id">
+      <Player :player="player.player" />
     </li>
   </ul>
 </template>
 
 <script>
 import Player from "./Player";
+import { store } from "../store/store";
 
 export default {
   name: "PlayersList",
-  props: {
-    players: Array,
-  },
   components: {
     Player,
+  },
+  data() {
+    return {
+      stats: store.state.stats,
+    };
   },
 };
 </script>

@@ -1,15 +1,30 @@
 <template>
   <div class="player">
-    <h3>{{ player.first_name }} {{ player.last_name }}</h3>
-    <h4>{{ player.team.full_name }}</h4>
+    <h2>{{ player.first_name }} {{ player.last_name }}</h2>
+    <!-- <h3>{{ player.team.full_name }}</h3> -->
+    <div class="router-link stats-link" @click="onClick">
+      <router-link to="/stats">Show stats...</router-link>
+    </div>
   </div>
 </template>
 
 <script>
+import { store } from "../store/store";
+
 export default {
   name: "Player",
   props: {
     player: Object,
+  },
+  data() {
+    return {
+      id: store.state.id,
+    };
+  },
+  methods: {
+    onClick() {
+      store.updateId(this.player.id);
+    },
   },
 };
 </script>
