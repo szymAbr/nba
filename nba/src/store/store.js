@@ -3,7 +3,7 @@ import { reactive } from "vue";
 export const store = {
   state: reactive({
     stats: [],
-    id: [],
+    id: [0],
     currentPlayer: {},
   }),
   clearStats() {

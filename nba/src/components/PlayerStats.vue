@@ -7,7 +7,7 @@
 
     <h3>{{ playerName }}</h3>
 
-    <div class="container-stats">
+    <div class="container-stats" v-if="currentPlayer">
       <dl class="stats">
         <dt>Games played</dt>
         <dd>{{ currentPlayer.games_played }}</dd>
@@ -47,14 +47,11 @@ import axios from "axios";
 
 export default {
   name: "PlayerStats",
-  // props: {
-  //   id: Number,
-  // },
   data() {
     return {
       stats: store.state.stats,
-      savedId: 0,
-      savedPlayer: {},
+      // playerName: "",
+      updated: false,
     };
   },
   computed: {
@@ -68,47 +65,69 @@ export default {
 
     playerName() {
       for (let obj of this.stats) {
-        if (obj.player.id === this.currentPlayer.player_id) {
+        if (
+          this.currentPlayer &&
+          obj.player.id === this.currentPlayer.player_id
+        ) {
           const player = obj.player;
 
           return `${player.first_name} ${player.last_name}`;
         }
       }
-      return "kaszanka";
+      return null;
     },
   },
-  // keep id and player in sessionStorage!
+  watch: {
+    id(newId) {
+      console.log(newId);
 
-  // created() {
-  //   const json = sessionStorage.getItem("currentPlayer");
+      sessionStorage.setItem("id", newId);
+    },
 
-  //   this.savedId = sessionStorage.getItem("id");
-  //   this.savedPlayer = JSON.parse(json);
+    currentPlayer(newPlayer) {
+      if (!this.updated) {
+        this.updated = true;
+        console.log(newPlayer);
+      }
 
-  //   console.log(`savedId: ${this.savedId}`);
-  //   console.log("savedPlayer:");
-  //   console.log(this.savedPlayer);
-  // },
-  updated() {
-    axios
-      .get(
-        `https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=${this.id}`
-      )
-      .then((response) => {
-        store.updateCurrentPlayer(...response.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        this.loading = false;
-      });
+      const json = JSON.stringify(newPlayer);
+
+      sessionStorage.setItem("player", json);
+    },
   },
-  beforeUnmount() {
-    const json = JSON.stringify(this.currentPlayer);
+  created() {
+    if (typeof store.state.id === "object") {
+      const savedId = sessionStorage.getItem("id");
 
-    sessionStorage.setItem("id", this.id);
-    sessionStorage.setItem("currentPlayer", json);
+      store.updateId(savedId);
+    }
+
+    if (
+      store.state.currentPlayer &&
+      Object.keys(store.state.currentPlayer).length === 0
+    ) {
+      const json = sessionStorage.getItem("player");
+      const savedPlayer = JSON.parse(json);
+
+      store.updateCurrentPlayer(savedPlayer);
+    }
+  },
+  updated() {
+    if (!this.updated) {
+      axios
+        .get(
+          `https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=${this.id}`
+        )
+        .then((response) => {
+          store.updateCurrentPlayer(...response.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    }
   },
 };
 </script>

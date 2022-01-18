@@ -1,7 +1,6 @@
 <template>
   <div class="player">
     <h2>{{ player.first_name }} {{ player.last_name }}</h2>
-    <!-- <h3>{{ player.team.full_name }}</h3> -->
     <div class="router-link stats-link" @click="onClick">
       <router-link to="/stats">Show stats...</router-link>
     </div>
