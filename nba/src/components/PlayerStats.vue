@@ -5,9 +5,16 @@
     <h3>{{ playerName }}</h3>
 
     <div class="container-stats">
-      <div class="stats chart">
+      <!-- <div class="stats chart">
         <h4>Games played</h4>
         <h3>{{ currentPlayer ? currentPlayer.games_played : "-" }}</h3>
+      </div> -->
+
+      <p>Games played</p>
+      <div class="container-chart">
+        <div id="games">
+          {{ currentPlayer ? gamesPlayed : "-" }}
+        </div>
       </div>
 
       <div class="container-blocks">
@@ -16,10 +23,13 @@
         </div>
       </div>
     </div>
+
+    <!-- <PlayerStatsChart /> -->
   </div>
 </template>
 
 <script>
+// import PlayerStatsChart from "./PlayerStatsChart";
 import PlayerStatsBlock from "./PlayerStatsBlock";
 import { store } from "../store/store";
 import axios from "axios";
@@ -34,6 +44,7 @@ export default {
     };
   },
   components: {
+    // PlayerStatsChart,
     PlayerStatsBlock,
   },
   computed: {
@@ -58,6 +69,10 @@ export default {
         }
       }
       return store.state.playerName;
+    },
+
+    gamesPlayed() {
+      return this.currentPlayer.games_played;
     },
   },
   methods: {
@@ -95,11 +110,14 @@ export default {
     playerName(newName) {
       sessionStorage.setItem("name", newName);
     },
+
+    gamesPlayed(newNum) {
+      const games = document.getElementById("games");
+
+      if (games) games.style.width = `${newNum}%`;
+    },
   },
   created() {
-    console.log("===created=== ID below");
-    console.log(this.id);
-
     if (typeof store.state.id === "object") {
       const savedId = sessionStorage.getItem("id");
 
@@ -179,5 +197,20 @@ export default {
   justify-content: space-between;
   color: black;
   margin: 0.5rem 6rem; */
+}
+
+.container-chart {
+  box-sizing: border-box;
+  width: 100%;
+  background-color: #ddd;
+}
+
+#games {
+  width: 90%;
+  color: white;
+  background-color: #bf7c18;
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 </style>
