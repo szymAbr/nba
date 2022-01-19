@@ -1,47 +1,26 @@
 <template>
   <div class="container">
-    <h6>ID: {{ id }}</h6>
-    <h6>currentPlayer: {{ currentPlayer }}</h6>
-
     <h2>Season 2018 average scores</h2>
 
     <h3>{{ playerName }}</h3>
 
-    <div class="container-stats" v-if="currentPlayer">
-      <dl class="stats">
-        <dt>Games played</dt>
-        <dd>{{ currentPlayer.games_played }}</dd>
-      </dl>
+    <div class="container-stats">
+      <div class="stats chart">
+        <h4>Games played</h4>
+        <h3>{{ currentPlayer ? currentPlayer.games_played : "-" }}</h3>
+      </div>
 
-      <dl class="stats">
-        <dt>PTS</dt>
-        <dd>{{ currentPlayer.pts }}</dd>
-      </dl>
-
-      <dl class="stats">
-        <dt>AST</dt>
-        <dd>{{ currentPlayer.ast }}</dd>
-      </dl>
-
-      <dl class="stats">
-        <dt>BLK</dt>
-        <dd>{{ currentPlayer.blk }}</dd>
-      </dl>
-
-      <dl class="stats">
-        <dt>STL</dt>
-        <dd>{{ currentPlayer.stl }}</dd>
-      </dl>
-
-      <dl class="stats">
-        <dt>TO</dt>
-        <dd>{{ currentPlayer.turnover }}</dd>
-      </dl>
+      <div class="container-blocks">
+        <div class="stats block" v-for="param in statsParams" :key="param">
+          <PlayerStatsBlock :param="param" :currentPlayer="currentPlayer" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import PlayerStatsBlock from "./PlayerStatsBlock";
 import { store } from "../store/store";
 import axios from "axios";
 
@@ -50,9 +29,12 @@ export default {
   data() {
     return {
       stats: store.state.stats,
-      // playerName: "",
+      statsParams: ["pts", "ast", "blk", "stl", "turnover"],
       updated: false,
     };
+  },
+  components: {
+    PlayerStatsBlock,
   },
   computed: {
     id() {
@@ -70,32 +52,54 @@ export default {
           obj.player.id === this.currentPlayer.player_id
         ) {
           const player = obj.player;
+          const fullName = `${player.first_name} ${player.last_name}`;
 
-          return `${player.first_name} ${player.last_name}`;
+          return fullName;
         }
       }
-      return null;
+      return store.state.playerName;
+    },
+  },
+  methods: {
+    fetchStats() {
+      axios
+        .get(
+          `https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=${this.id}`
+        )
+        .then((response) => {
+          store.updateCurrentPlayer(...response.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          console.log("data fetch done");
+        });
     },
   },
   watch: {
     id(newId) {
-      console.log(newId);
-
       sessionStorage.setItem("id", newId);
     },
 
     currentPlayer(newPlayer) {
       if (!this.updated) {
         this.updated = true;
-        console.log(newPlayer);
       }
 
       const json = JSON.stringify(newPlayer);
 
       sessionStorage.setItem("player", json);
     },
+
+    playerName(newName) {
+      sessionStorage.setItem("name", newName);
+    },
   },
   created() {
+    console.log("===created=== ID below");
+    console.log(this.id);
+
     if (typeof store.state.id === "object") {
       const savedId = sessionStorage.getItem("id");
 
@@ -111,22 +115,28 @@ export default {
 
       store.updateCurrentPlayer(savedPlayer);
     }
+
+    if (!store.state.playerName) {
+      const savedName = sessionStorage.getItem("name");
+
+      store.updatePlayerName(savedName);
+    }
+
+    this.fetchStats();
+  },
+  mounted() {
+    setTimeout(() => {
+      const json = JSON.stringify(this.currentPlayer);
+
+      sessionStorage.setItem("id", this.id);
+      sessionStorage.setItem("player", json);
+      sessionStorage.setItem("name", this.playerName);
+    }, 1000);
   },
   updated() {
+    console.log("===updated===");
     if (!this.updated) {
-      axios
-        .get(
-          `https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=${this.id}`
-        )
-        .then((response) => {
-          store.updateCurrentPlayer(...response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      this.fetchStats();
     }
   },
 };
@@ -134,18 +144,40 @@ export default {
 
 <style scoped>
 .container {
-  width: 50%;
-  margin: auto;
+  width: 100%;
+  /* margin: auto; */
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
 .container-stats {
-  background-color: rgb(55, 68, 182);
+  width: 40rem;
+  margin-top: 5rem;
+}
+
+.chart {
+  font-size: 1.6rem;
+}
+
+.container-blocks {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.block {
+  border: solid 2px white;
+  background-color: rgba(9, 13, 80, 0.74);
+  color: white;
+  width: 20%;
 }
 
 .stats {
-  color: white;
-  display: flex;
+  /* width: 100%; */
+  /* display: flex;
   align-items: center;
   justify-content: space-between;
+  color: black;
+  margin: 0.5rem 6rem; */
 }
 </style>

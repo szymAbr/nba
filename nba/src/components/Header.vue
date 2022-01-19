@@ -11,7 +11,11 @@ export default {
 </script>
 
 <style scoped>
-h2 {
+header {
   color: red;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-size: 43px;
+  -webkit-text-stroke: 2px white;
+  margin: 1rem;
 }
 </style>

@@ -1,7 +1,9 @@
 <template>
   <div class="stats">
     <PlayerStats v-if="id" :id="parseInt(id)" />
-    <router-link to="/" exact>Home</router-link>
+    <div class="router-link">
+      <router-link to="/" exact>Home</router-link>
+    </div>
   </div>
 </template>
 
@@ -21,3 +23,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.router-link,
+a,
+a:visited {
+  color: white;
+}
+</style>

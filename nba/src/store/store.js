@@ -5,6 +5,7 @@ export const store = {
     stats: [],
     id: [0],
     currentPlayer: {},
+    playerName: null,
   }),
   clearStats() {
     this.state.stats.length = 0;
@@ -17,5 +18,8 @@ export const store = {
   },
   updateCurrentPlayer(player) {
     this.state.currentPlayer = player;
+  },
+  updatePlayerName(name) {
+    this.state.playerName = name;
   },
 };
