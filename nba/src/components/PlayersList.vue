@@ -31,11 +31,35 @@ export default defineComponent({
 
 <style scoped>
 .players-list-main {
-  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-bottom: 5rem;
   display: grid;
-  grid-gap: 2rem;
-  grid-template-columns: repeat(5, 10rem);
-  grid-template-rows: repeat(5, 10rem);
+  grid-gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .players-list-main {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 800px) {
+  .players-list-main {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1000px) {
+  .players-list-main {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .players-list-main {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 
 .players-list-element {

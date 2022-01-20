@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <h2>Season 2018 average scores</h2>
+    <h2 class="season">Season 2018 average scores</h2>
 
-    <h3>{{ playerName }}</h3>
+    <h2>{{ playerName }}</h2>
 
     <div class="container-stats">
       <p>Games played</p>
@@ -155,8 +155,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-h2 {
+.season {
   margin-bottom: 4rem;
+  text-decoration-line: underline;
+}
+
+p {
+  font-weight: 600;
 }
 
 .container {
@@ -169,6 +174,12 @@ h2 {
   margin-top: 4rem;
 }
 
+@media (max-width: 670px) {
+  .container-stats {
+    width: 100%;
+  }
+}
+
 .chart {
   font-size: 1.6rem;
 }
@@ -178,6 +189,15 @@ h2 {
   justify-content: space-evenly;
   margin-top: 3rem;
   margin-bottom: 3rem;
+  /* flex-direction: column;
+  align-items: center; */
+}
+
+@media (max-width: 670px) {
+  .container-blocks {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .block {
@@ -187,10 +207,23 @@ h2 {
   width: 20%;
 }
 
+@media (max-width: 670px) {
+  .block {
+    width: 100%;
+  }
+}
+
 .container-chart {
   box-sizing: border-box;
   width: 100%;
   background-color: #ddd;
+  margin: auto;
+}
+
+@media (max-width: 670px) {
+  .container-chart {
+    width: 100%;
+  }
 }
 
 #games {
@@ -198,6 +231,7 @@ h2 {
   color: white;
   background-color: #bf7c18;
   text-align: center;
+  font-weight: 600;
   padding-top: 10px;
   padding-bottom: 10px;
 }

@@ -30,5 +30,6 @@ export default defineComponent({
 a,
 a:visited {
   color: white;
+  margin-bottom: 5rem;
 }
 </style>
