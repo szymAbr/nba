@@ -1,41 +1,34 @@
 <template>
   <div>
-    <PlayersList />
+    <PlayersList :stats="stats" />
   </div>
 </template>
 
-<script>
-import PlayersList from "../components/PlayersList";
+<script lang="ts">
+import PlayersList from "../components/PlayersList.vue";
 import axios from "axios";
 import { store } from "../store/store";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "Home",
   components: {
     PlayersList,
   },
-  data() {
-    return {
-      loading: true,
-      stats: [],
-    };
+  computed: {
+    stats() {
+      return store.state.stats;
+    },
   },
   created() {
     axios
       .get("https://www.balldontlie.io/api/v1/stats")
       .then((response) => {
-        this.stats = response.data.data;
-
-        store.clearStats();
+        store.updateStats(response.data.data);
       })
       .catch((error) => {
         console.log(error);
-      })
-      .finally(() => {
-        store.updateStats(this.stats);
-
-        this.loading = false;
       });
   },
-};
+});
 </script>

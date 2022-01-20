@@ -1,31 +1,36 @@
 <template>
   <div class="player">
-    <h2>{{ player.first_name }} {{ player.last_name }}</h2>
+    <h2>
+      {{ player ? player.first_name : null }}
+      {{ player ? player.last_name : null }}
+    </h2>
     <div class="router-link" @click="onClick">
-      <router-link to="/stats">Show stats...</router-link>
+      <router-link to="/stats">Show stats</router-link>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent, PropType } from "vue";
 import { store } from "../store/store";
+import Player from "../types/Player";
 
-export default {
+export default defineComponent({
   name: "Player",
   props: {
-    player: Object,
+    player: Object as PropType<Player>,
   },
   data() {
     return {
-      id: store.state.id,
+      id: store.state.id as number | number[],
     };
   },
   methods: {
     onClick() {
-      store.updateId(this.player.id);
+      store.updateId(this.player!.id);
     },
   },
-};
+});
 </script>
 
 <style scoped>

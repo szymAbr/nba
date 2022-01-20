@@ -3,23 +3,23 @@ import { reactive } from "vue";
 export const store = {
   state: reactive({
     stats: [],
-    id: [0],
+    id: 0,
     currentPlayer: {},
-    playerName: null,
+    playerName: "",
   }),
   clearStats() {
     this.state.stats.length = 0;
   },
-  updateStats(stats) {
-    this.state.stats.push(...stats);
+  updateStats(stats: any) {
+    this.state.stats = stats;
   },
-  updateId(id) {
+  updateId(id: number) {
     this.state.id = id;
   },
-  updateCurrentPlayer(player) {
+  updateCurrentPlayer(player: Object) {
     this.state.currentPlayer = player;
   },
-  updatePlayerName(name) {
+  updatePlayerName(name: string) {
     this.state.playerName = name;
   },
 };

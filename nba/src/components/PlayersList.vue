@@ -1,10 +1,4 @@
 <template>
-  <!-- <ul class="players-list">
-    <li v-for="player in stats" :key="player.player.id">
-      <Player :player="player.player" />
-    </li>
-  </ul> -->
-
   <div class="players-list-main">
     <div
       class="players-list-element"
@@ -16,21 +10,23 @@
   </div>
 </template>
 
-<script>
-import Player from "./Player";
+<script lang="ts">
+import Player from "./Player.vue";
 import { store } from "../store/store";
+import StatsObject from "../types/StatsObject";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "PlayersList",
   components: {
     Player,
   },
   data() {
     return {
-      stats: store.state.stats,
+      stats: store.state.stats as StatsObject[],
     };
   },
-};
+});
 </script>
 
 <style scoped>
@@ -44,7 +40,6 @@ export default {
 
 .players-list-element {
   border: solid 2px white;
-  /* background-color: rgb(199, 110, 68); */
   background-color: rgba(9, 13, 80, 0.74);
 }
 

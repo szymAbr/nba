@@ -1,27 +1,28 @@
 <template>
   <div class="stats">
-    <PlayerStats v-if="id" :id="parseInt(id)" />
+    <PlayerStats v-if="id" :id="id" />
     <div class="router-link">
       <router-link to="/" exact>Home</router-link>
     </div>
   </div>
 </template>
 
-<script>
-import PlayerStats from "../components/PlayerStats";
+<script lang="ts">
+import PlayerStats from "../components/PlayerStats.vue";
 import { store } from "../store/store";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "Stats",
   components: {
     PlayerStats,
   },
   computed: {
     id() {
-      return store.state.id;
+      return store.state.id as string | number;
     },
   },
-};
+});
 </script>
 
 <style scoped>

@@ -5,11 +5,6 @@
     <h3>{{ playerName }}</h3>
 
     <div class="container-stats">
-      <!-- <div class="stats chart">
-        <h4>Games played</h4>
-        <h3>{{ currentPlayer ? currentPlayer.games_played : "-" }}</h3>
-      </div> -->
-
       <p>Games played</p>
       <div class="container-chart">
         <div id="games">
@@ -23,40 +18,38 @@
         </div>
       </div>
     </div>
-
-    <!-- <PlayerStatsChart /> -->
   </div>
 </template>
 
-<script>
-// import PlayerStatsChart from "./PlayerStatsChart";
-import PlayerStatsBlock from "./PlayerStatsBlock";
+<script lang="ts">
+import PlayerStatsBlock from "./PlayerStatsBlock.vue";
 import { store } from "../store/store";
 import axios from "axios";
+import { defineComponent } from "vue";
+import StatsObject from "../types/StatsObject";
 
-export default {
+export default defineComponent({
   name: "PlayerStats",
   data() {
     return {
-      stats: store.state.stats,
-      statsParams: ["pts", "ast", "blk", "stl", "turnover"],
-      updated: false,
+      stats: store.state.stats as StatsObject[],
+      statsParams: ["pts", "ast", "blk", "stl", "turnover"] as string[],
+      updated: false as boolean,
     };
   },
   components: {
-    // PlayerStatsChart,
     PlayerStatsBlock,
   },
   computed: {
-    id() {
+    id(): number | number[] {
       return store.state.id;
     },
 
-    currentPlayer() {
+    currentPlayer(): any {
       return store.state.currentPlayer;
     },
 
-    playerName() {
+    playerName(): string {
       for (let obj of this.stats) {
         if (
           this.currentPlayer &&
@@ -71,7 +64,7 @@ export default {
       return store.state.playerName;
     },
 
-    gamesPlayed() {
+    gamesPlayed(): number {
       return this.currentPlayer.games_played;
     },
   },
@@ -82,22 +75,22 @@ export default {
           `https://www.balldontlie.io/api/v1/season_averages?season=2018&player_ids[]=${this.id}`
         )
         .then((response) => {
-          store.updateCurrentPlayer(...response.data.data);
+          store.updateCurrentPlayer(response.data.data[0]);
         })
-        .catch((error) => {
+        .catch((error: string) => {
           console.log(error);
         })
         .finally(() => {
-          console.log("data fetch done");
+          console.log("data fetch complete");
         });
     },
   },
   watch: {
-    id(newId) {
-      sessionStorage.setItem("id", newId);
+    id(newId: number | string) {
+      sessionStorage.setItem("id", newId.toString());
     },
 
-    currentPlayer(newPlayer) {
+    currentPlayer(newPlayer: Object) {
       if (!this.updated) {
         this.updated = true;
       }
@@ -107,11 +100,11 @@ export default {
       sessionStorage.setItem("player", json);
     },
 
-    playerName(newName) {
+    playerName(newName: string) {
       sessionStorage.setItem("name", newName);
     },
 
-    gamesPlayed(newNum) {
+    gamesPlayed(newNum: number) {
       const games = document.getElementById("games");
 
       if (games) games.style.width = `${newNum}%`;
@@ -119,57 +112,61 @@ export default {
   },
   created() {
     if (typeof store.state.id === "object") {
-      const savedId = sessionStorage.getItem("id");
+      const savedId: string | null = sessionStorage.getItem("id");
 
-      store.updateId(savedId);
+      savedId ? store.updateId(parseInt(savedId)) : null;
     }
 
     if (
       store.state.currentPlayer &&
       Object.keys(store.state.currentPlayer).length === 0
     ) {
-      const json = sessionStorage.getItem("player");
-      const savedPlayer = JSON.parse(json);
+      const json: string | null = sessionStorage.getItem("player");
+      let savedPlayer = "";
+
+      json ? (savedPlayer = JSON.parse(json)) : null;
 
       store.updateCurrentPlayer(savedPlayer);
     }
 
     if (!store.state.playerName) {
-      const savedName = sessionStorage.getItem("name");
+      const savedName: string | null = sessionStorage.getItem("name");
 
-      store.updatePlayerName(savedName);
+      savedName ? store.updatePlayerName(savedName) : null;
     }
 
     this.fetchStats();
   },
   mounted() {
     setTimeout(() => {
-      const json = JSON.stringify(this.currentPlayer);
+      const json: string = JSON.stringify(this.currentPlayer);
 
-      sessionStorage.setItem("id", this.id);
+      sessionStorage.setItem("id", this.id.toString());
       sessionStorage.setItem("player", json);
       sessionStorage.setItem("name", this.playerName);
     }, 1000);
   },
   updated() {
-    console.log("===updated===");
     if (!this.updated) {
       this.fetchStats();
     }
   },
-};
+});
 </script>
 
 <style scoped>
+h2 {
+  margin-bottom: 4rem;
+}
+
 .container {
   width: 100%;
-  /* margin: auto; */
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
 .container-stats {
   width: 40rem;
-  margin-top: 5rem;
+  margin-top: 4rem;
 }
 
 .chart {
@@ -188,15 +185,6 @@ export default {
   background-color: rgba(9, 13, 80, 0.74);
   color: white;
   width: 20%;
-}
-
-.stats {
-  /* width: 100%; */
-  /* display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: black;
-  margin: 0.5rem 6rem; */
 }
 
 .container-chart {
