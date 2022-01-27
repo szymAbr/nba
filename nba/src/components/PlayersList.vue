@@ -1,5 +1,5 @@
 <template>
-  <div class="players-list-main">
+  <div v-if="stats" class="players-list-main">
     <div
       class="players-list-element"
       v-for="player in stats"
@@ -12,19 +12,16 @@
 
 <script lang="ts">
 import Player from "./Player.vue";
-import { store } from "../store/store";
 import StatsObject from "../types/StatsObject";
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "PlayersList",
   components: {
     Player,
   },
-  data() {
-    return {
-      stats: store.state.stats as StatsObject[],
-    };
+  props: {
+    stats: Array as PropType<StatsObject[]>,
   },
 });
 </script>
